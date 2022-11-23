@@ -3,6 +3,8 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter as fmt
+from math import e, pi, sin, cos, floor
+
 import sys
 
 def window(X, lower_prcnt, upper_prcnt):
@@ -12,7 +14,7 @@ def window(X, lower_prcnt, upper_prcnt):
     return X[lower_index : upper_index]
 
 def w(X):
-    return window(X, 0.250, 0.253)
+    return window(X, 0.25, 0.253)
 
 pb_freqs = {
     "1 GHz": 0,

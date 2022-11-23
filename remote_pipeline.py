@@ -3,11 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 import time
-import scipy.fftpack
+from scipy.fft import rfft, rfftfreq, fftshift
 import csv
 from math import e, pi, sin, floor
 
-exp_num = 12
+exp_num = 0
 rx_config = {
     "frequency": 2000 * 10**6,
     "samplerate": 60 * 10**6,
@@ -15,6 +15,9 @@ rx_config = {
     "gain": 40,
     "duration_s": 0.001
 }
+
+# 1Khz
+# 
 
 tx_config = {
     "frequency": 1572.46 * 10**6,
@@ -50,8 +53,10 @@ cmds.append("print")
 file_format = file_ext = "csv"
 file_out_name = "/tmp/rx_out"
 file_in_name = "/tmp/sin_in"
+rx_channels = ["1","2"]
+rx_channels_str = ",".join(rx_channels)
 
-cmds.append(f"rx config file={file_out_name}.{file_ext} format={file_format} n={num_samples(rx_config)}")
+cmds.append(f"rx config file={file_out_name}.{file_ext} format={file_format} n={num_samples(rx_config) * len(rx_channels)} channel={rx_channels_str}")
 # cmds.append(f"tx config file={file_in_name}.{file_ext} format={file_format} repeat=0 delay=4000")
 
 # cmds.append("tx start")
@@ -80,22 +85,39 @@ sp.run(["scp", "phyg@172.20.10.2:/tmp/rx_out.csv", f"./test_{exp_num}.csv"])
 
 print("---------------------VIZ---------------------")
 csv = np.genfromtxt(f"test_{exp_num}.csv", delimiter=',').T
-signal_i = csv[0]
-signal_q = csv[1]
-signal = signal_i + signal_q * 1j
+
+signal1_i = csv[0]
+signal1_q = csv[1]
+signal2_i = csv[2]
+signal2_q = csv[3]
+
+signal1 = signal1_i + signal1_q * 1j
+signal2 = signal2_i + signal2_q * 1j 
+
+fig, axs = plt.subplots(3)
 T = np.linspace(0, int((rx_config["duration_s"] * 1000) ), int(num_samples(rx_config))) / 1000
 
-fig, axs = plt.subplots(2)
+axs[0].plot(T, signal1_i)
+# axs[0].plot(T, signal1_q)
+axs[0].plot(T, signal2_i)
+# axs[0].plot(T, signal2_q)
+axs[0].set_title(f"Recieved RX1,2 Signals!")
 
-axs[0].plot(T, signal_i)
-axs[0].plot(T, signal_q)
-axs[0].set_title(f"Recieved IQ Signals!")
-
-
-yf_i = scipy.fftpack.fft(signal_i)
-yf_q = scipy.fftpack.fft(signal_q)
 n=int(num_samples(rx_config))
-xf = np.linspace(0, 1/(2*rx_config["duration_s"]), n//2)
-axs[1].plot(xf, 2.0/n * np.abs(yf_i[:n//2]))
-axs[1].set_title('Signal in Frequency Domain!')
-plt.show()
+xf = rfftfreq(n, 1 / (rx_config["samplerate"]))
+
+yf_1 = rfft(signal1_i)
+axs[1].stem(xf, np.abs(yf_1))
+axs[1].set_title('RX1 Signal in Frequency Domain!')
+
+yf_2 = rfft(signal2_i)
+axs[2].stem(xf, np.abs(yf_2))
+axs[2].set_title('RX2 Signal in Frequency Domain!')
+
+maxpos1 = np.argmax(np.abs(yf_1))
+print(np.angle(yf_1[maxpos1], deg=True))
+
+maxpos2 = np.argmax(np.abs(yf_2))
+print(np.angle(yf_2[maxpos2], deg=True))
+print(np.angle(yf_1[maxpos1], deg=True) - np.angle(yf_2[maxpos1], deg=True))
+# plt.show()

@@ -11,9 +11,6 @@
     - Gain = 40
     - Duration = 0.001s
 
-## General Observations
-- True Signal gets harder to figure out as the baseband frequency increases, regardless of the passband frequency
-
 ## File Properties
 
 | File | PB FREQ | BB FREQ |
