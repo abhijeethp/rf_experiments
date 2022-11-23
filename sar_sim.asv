@@ -7,7 +7,7 @@ arm_base_dim = [150 100];
 arm_length = 80;
 rpm = 15;
 
-theta = 30;
+angle_to = 30;
 
 % animation config
 animation_time_s = 4; % time for one rotation
@@ -63,7 +63,7 @@ y4 = (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1);
 rx2_tx = plot([rx2_x(1) x4],[rx2_y(1) y4], '--', 'LineWidth',2);
 
 midpoint = [(rx1_dim(1) + x4)/2 (rx1_dim(2) + y4)/2];
-d_costheta_label = text(midpoint(1), midpoint(2), ['d*costheta=' ], 'FontSize',15);
+d_costheta_label = text(midpoint(1), midpoint(2), ['dcos\theta=' num2str(d*cosd(theta))], 'FontSize',15);
 
 % animation
 
@@ -104,7 +104,10 @@ for ii=2:length(arm_theta_d)
     y4 = (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1);
     set(rx2_tx, 'XData', [rx2_x(ii) x4]);
     set(rx2_tx, 'YData', [rx2_y(ii) y4]);
-
+    
+    midpoint = [(rx1_dim(1) + x4)/2 (rx1_dim(2) + y4)/2];
+    set(d_costheta_label, 'Position', [midpoint(1) midpoint(2) 0]);
+    set(d_costheta_label, 'String', ['dcos\theta=' num2str(d*cosd(theta))]);
     
     drawnow;
     pause(0.05);

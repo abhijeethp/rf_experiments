@@ -7,7 +7,10 @@ arm_base_dim = [150 100];
 arm_length = 80;
 rpm = 15;
 
-theta = 30;
+angle_to_sar = 60;
+
+wavelength = 20;
+
 
 % animation config
 animation_time_s = 4; % time for one rotation
@@ -44,6 +47,8 @@ d_label = text(ax1, midpoint(1), midpoint(2), ['d=' num2str(round(d, 2))], 'Font
 m = (rx2_y(1) - rx1_dim(2))/(rx2_x(1) - rx1_dim(1));
 alpha = atand(m);
 
+theta = angle_to_sar - alpha;
+
 xlim = get(gca,'XLim');
 x2 = rx1_dim(1)+(240*cosd(theta+alpha));
 y2 = rx1_dim(2)+(240*sind(theta+alpha));
@@ -64,7 +69,7 @@ rx2_tx = plot([rx2_x(1) x4],[rx2_y(1) y4], '--', 'LineWidth',2);
 
 midpoint = [(rx1_dim(1) + x4)/2 (rx1_dim(2) + y4)/2];
 d_costheta_label = text(midpoint(1), midpoint(2), ['dcos\theta=' num2str(d*cosd(theta))], 'FontSize',15);
-
+disp(['Phase Difference : ' num2str(2 * pi * d * cosd(theta)/ wavelength)]);
 % animation
 
 for ii=2:length(arm_theta_d)
@@ -84,6 +89,8 @@ for ii=2:length(arm_theta_d)
 
     m = (rx2_y(ii) - rx1_dim(2))/(rx2_x(ii) - rx1_dim(1));
     alpha = atand(m);
+    theta = angle_to_sar - alpha;
+
     x2 = rx1_dim(1) + (240 * cosd(theta+alpha));
     y2 = rx1_dim(2) + (240 * sind(theta+alpha));
     set(rx1_tx, 'XData', [rx1_dim(1) x2]);
@@ -110,5 +117,7 @@ for ii=2:length(arm_theta_d)
     set(d_costheta_label, 'String', ['dcos\theta=' num2str(d*cosd(theta))]);
     
     drawnow;
+
+    disp(['Phase Difference : ' num2str(2 * pi * d * cosd(theta)/ wavelength)]);
     pause(0.05);
 end
