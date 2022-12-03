@@ -6,6 +6,7 @@ from   pathlib import Path
 num_channels = 2
 bytes_per_signal = 2
 bytes_per_sample = 2 * num_channels * bytes_per_signal
+
 def chunked_read( fobj, chunk_bytes = bytes_per_sample*1024 ):
     while True:
         data = fobj.read(chunk_bytes)
@@ -26,6 +27,5 @@ def bin2csv( binfile = None,  chunk_bytes = bytes_per_sample*1024 ):
                 sig_q2, = struct.unpack('<h', data[i+6:i+8])
                 count +=1
                 print(",".join([str(sig_i1), str(sig_q1), str(sig_i2), str(sig_q2)]))
-    print( "Processed", str(count), "samples." )
 
 bin2csv( "/tmp/rx_out.bin")
