@@ -3,7 +3,7 @@
 
 #define STATUS_OFF 0
 #define STATUS_ON 1
-#define STATUS_RESET 2
+#define STATUS_SET_POS 2 
 #define STATUS_RUN_FIXED_CYCLES 3
 
 Servo myservo;  
@@ -31,8 +31,8 @@ void loop() {
   if(current_status == STATUS_OFF)
     return;
   
-  if(current_status == STATUS_RESET) {
-    pos = 0;
+  if(current_status == STATUS_SET_POS) {
+    pos = Serial.parseInt();
     myservo.write(pos);
     current_status = STATUS_OFF;
     return;
