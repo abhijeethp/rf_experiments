@@ -10,7 +10,7 @@ rx_config = {
     "duration_s": 0.1
 }
 
-port = '/dev/cu.usbmodem14401'
+port = '/dev/ttyACM0'
 baudrate = 9600
 
 def num_samples(config):
@@ -19,10 +19,10 @@ def num_samples(config):
 def current_time():
     curtime_ms = time.time_ns() // 1_000_000
     s, ms = divmod(curtime_ms, 1000)
-    return '%s.%03d' % (time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(s)), ms)
+    return '%s.%03dZ' % (time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(s)), ms)
 
 def print_current_time(msg):
-    print(current_time() + " | " + msg)
+    print(current_time() + "," + msg)
 
 def start(command):
     return
@@ -71,22 +71,22 @@ print_current_time("starting_rx")
 write(p, "rx start")
 write(p, "rx wait")
 
-print_current_time("starting_servo")
-arduino.write(bytes('1', 'utf-8'))
+print_current_time("running_4_servo_cycles")
+arduino.write(bytes('3 4', 'utf-8'))
 
 t_end = time.time() + 15
 with open('/tmp/ard_out.log', 'wb') as f:
     while time.time() < t_end:
         line = arduino.readline().decode('utf-8')
+        if line == "" or line == "\n":
+            continue
         curtime_ms = time.time_ns() // 1_000_000
         s, ms = divmod(curtime_ms, 1000)
-        curtime = '%s.%03d' % (time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(s)), ms)
-        f.write(bytes(current_time() + " | " + line, 'utf-8'))
+        curtime = '%s.%03dZ' % (time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(s)), ms)
+        f.write(bytes(current_time() + "," + line, 'utf-8'))
 
 print_current_time("terminating_bladerf_cli")
 terminate(p)
-print_current_time("stopping_servo")
-arduino.write(bytes('0', 'utf-8'))
 
 
 
