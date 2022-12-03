@@ -7,17 +7,15 @@ from scipy.fft import rfft, rfftfreq, fftshift
 import csv
 from math import e, pi, sin, floor
 
+
 exp_num = 0
 rx_config = {
     "frequency": 2000 * 10**6,
     "samplerate": 60 * 10**6,
     "bandwidth": 10 * 10**6,
     "gain": 40,
-    "duration_s": 0.001
+    "duration_s": 0.01
 }
-
-# 1Khz
-# 
 
 tx_config = {
     "frequency": 1572.46 * 10**6,
@@ -65,8 +63,8 @@ cmds.append(f"rx config file={file_out_name}.{file_ext} format={file_format} n={
 cmds.append("rx start")
 cmds.append("rx")
 
-cmds.append("rx wait")
-cmds.append("rx")
+# cmds.append("rx wait")
+# cmds.append("rx")
 time.sleep(0.2)
 
 # cmds.append("tx stop")
@@ -77,8 +75,11 @@ print("Executing commands in the following order")
 for i,cmd in enumerate(cmds):
     print(f"\t {i}." + cmd)
 
+
+sp.run(["scp", "./log_arduino_serial.py", "phyg@172.20.10.2:/home/phyg/Desktop/log_arduino_signal.py"])
+
 print("---------------------RUNNING SSH---------------------")
-sp.run(["ssh", "phyg@172.20.10.2"] + ["bladeRF-cli -e \"" + "; ".join(cmds) +"\""])
+sp.run(["ssh", "phyg@172.20.10.2"] + ["bladeRF-cli -e \"" + "; ".join(cmds) +"\""] )
 
 print("---------------------COPYING OUTPUT---------------------")
 sp.run(["scp", "phyg@172.20.10.2:/tmp/rx_out.csv", f"./test_{exp_num}.csv"])
@@ -86,38 +87,38 @@ sp.run(["scp", "phyg@172.20.10.2:/tmp/rx_out.csv", f"./test_{exp_num}.csv"])
 print("---------------------VIZ---------------------")
 csv = np.genfromtxt(f"test_{exp_num}.csv", delimiter=',').T
 
-signal1_i = csv[0]
-signal1_q = csv[1]
-signal2_i = csv[2]
-signal2_q = csv[3]
+# signal1_i = csv[0]
+# signal1_q = csv[1]
+# signal2_i = csv[2]
+# signal2_q = csv[3]
 
-signal1 = signal1_i + signal1_q * 1j
-signal2 = signal2_i + signal2_q * 1j 
+# signal1 = signal1_i + signal1_q * 1j
+# signal2 = signal2_i + signal2_q * 1j 
 
-fig, axs = plt.subplots(3)
-T = np.linspace(0, int((rx_config["duration_s"] * 1000) ), int(num_samples(rx_config))) / 1000
+# fig, axs = plt.subplots(3)
+# T = np.linspace(0, int((rx_config["duration_s"] * 1000) ), int(num_samples(rx_config))) / 1000
 
-axs[0].plot(T, signal1_i)
-# axs[0].plot(T, signal1_q)
-axs[0].plot(T, signal2_i)
-# axs[0].plot(T, signal2_q)
-axs[0].set_title(f"Recieved RX1,2 Signals!")
+# axs[0].plot(T, signal1_i)
+# # axs[0].plot(T, signal1_q)
+# axs[0].plot(T, signal2_i)
+# # axs[0].plot(T, signal2_q)
+# axs[0].set_title(f"Recieved RX1,2 Signals!")
 
-n=int(num_samples(rx_config))
-xf = rfftfreq(n, 1 / (rx_config["samplerate"]))
+# n=int(num_samples(rx_config))
+# xf = rfftfreq(n, 1 / (rx_config["samplerate"]))
 
-yf_1 = rfft(signal1_i)
-axs[1].stem(xf, np.abs(yf_1))
-axs[1].set_title('RX1 Signal in Frequency Domain!')
+# yf_1 = rfft(signal1_i)
+# axs[1].stem(xf, np.abs(yf_1))
+# axs[1].set_title('RX1 Signal in Frequency Domain!')
 
-yf_2 = rfft(signal2_i)
-axs[2].stem(xf, np.abs(yf_2))
-axs[2].set_title('RX2 Signal in Frequency Domain!')
+# yf_2 = rfft(signal2_i)
+# axs[2].stem(xf, np.abs(yf_2))
+# axs[2].set_title('RX2 Signal in Frequency Domain!')
 
-maxpos1 = np.argmax(np.abs(yf_1))
-print(np.angle(yf_1[maxpos1], deg=True))
+# maxpos1 = np.argmax(np.abs(yf_1))
+# print(np.angle(yf_1[maxpos1], deg=True))
 
-maxpos2 = np.argmax(np.abs(yf_2))
-print(np.angle(yf_2[maxpos2], deg=True))
-print(np.angle(yf_1[maxpos1], deg=True) - np.angle(yf_2[maxpos1], deg=True))
-# plt.show()
+# maxpos2 = np.argmax(np.abs(yf_2))
+# print(np.angle(yf_2[maxpos2], deg=True))
+# print(np.angle(yf_1[maxpos1], deg=True) - np.angle(yf_2[maxpos1], deg=True))
+# # plt.show()

@@ -92,7 +92,7 @@ for i,cmd in enumerate(cmds):
 
 print("---------------------XXX---------------------")
 
-exec("; ".join(cmds))
+print("; ".join(cmds))
 
 print("---------------------XXX---------------------")
 
