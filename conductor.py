@@ -10,7 +10,7 @@ rx_config = {
     "duration_s": 0.1
 }
 
-port = '/dev/ttyACM0'
+port = '/dev/cu.usbmodem14401'
 baudrate = 9600
 
 def num_samples(config):
@@ -25,6 +25,7 @@ def print_current_time(msg):
     print(current_time() + " | " + msg)
 
 def start(command):
+    return
     return sp.Popen(
         command,
         stdin=sp.PIPE,
@@ -37,10 +38,12 @@ def read(process):
     return process.stdout.readline().decode("utf-8").strip()
 
 def write(process, message):
+    return
     process.stdin.write(f"{message.strip()}\n".encode("utf-8"))
     process.stdin.flush()
 
 def terminate(process):
+    return
     process.stdin.close()
     process.terminate()
     process.wait(timeout=0.2)
