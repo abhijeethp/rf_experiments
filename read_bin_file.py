@@ -28,4 +28,5 @@ def bin2csv( binfile = None,  chunk_bytes = bytes_per_sample*1024 ):
                 count +=1
                 print(",".join([str(sig_i1), str(sig_q1), str(sig_i2), str(sig_q2)]))
 
-bin2csv( "/tmp/rx_out.bin")
+f_in = sys.argv[1]
+bin2csv(f_in)

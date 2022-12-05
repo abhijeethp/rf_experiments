@@ -13,6 +13,8 @@ int divfactor = 4;
 int current_status = STATUS_OFF;
 int loop_num = 0;
 
+int antenna_stand_still_duration_ms = 25;
+
 
 void setup() {
   myservo.attach(9);
@@ -44,6 +46,7 @@ void loop() {
     } else if(loop_num == 1) {
       loop_num = 0;
       current_status = STATUS_OFF;
+      Serial.println("Status changed to " + String(current_status));
       return;
     } else {
       loop_num -= 1;
@@ -51,7 +54,8 @@ void loop() {
   }
     
   Serial.println(String(pos));
-  delay(20);
+  delay(antenna_stand_still_duration_ms);
+
   while (pos <= 80) { 
     myservo.write(pos++); delay(45/divfactor);
     myservo.write(pos++); delay(40/divfactor);
@@ -64,11 +68,11 @@ void loop() {
     myservo.write(pos++); delay(40/divfactor);
     myservo.write(pos++); delay(45/divfactor); 
     Serial.println(String(pos));
-    delay(20);
+    delay(antenna_stand_still_duration_ms);
   }
 
   Serial.println(String(pos));
-  delay(20);
+  delay(antenna_stand_still_duration_ms);
 
   while (pos >= 10) { 
     myservo.write(pos--); delay(45/divfactor);
@@ -82,7 +86,9 @@ void loop() {
     myservo.write(pos--); delay(40/divfactor);
     myservo.write(pos--); delay(45/divfactor);
     Serial.println(String(pos));
-    delay(20);
+    delay(antenna_stand_still_duration_ms);
   }
-  delay(20);  
+
+  Serial.println(String(pos));
+  delay(antenna_stand_still_duration_ms);  
 }
