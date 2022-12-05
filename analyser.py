@@ -1,4 +1,4 @@
-from math import pow, sqrt, cos, acos, pi
+from math import pow, sqrt, sin, cos, acos, atan, pi
 
 # SAR GEOMETRY
 L_s = 40
@@ -22,25 +22,25 @@ def distance_at_degree(degree):
 
 d = [distance_at_degree(deg) for deg in arm_rotations]
 
-
 wavelength = 15
-
 def angle_of_arrival(d):
-    phase_diff = 0
+    phase_diff = 0 # TODO
     return acos( phase_diff * wavelength / 2 * pi * d)
 
-relative_aoa = [angle_of_arrival(distance) for d in ]
+relative_aoas = [angle_of_arrival(distance) for distance in d]
 
+def angle_to_base(theta_m):
+    theta_m_rad = theta_m * 2 * pi / 360
+    return atan( L_m * sin(theta_m_rad) / (L_s - L_m * cos(theta_m_rad)) )
+
+absolute_aoas = [relative_aoa + angle_to_base(arm_rotations[i]) for relative_aoa, i in enumerate(relative_aoas)]
 
 print("servo rotations\t: " + str(servo_rotations))    
 print("servo rotations error fixed\t: " + str(servo_rotations_error_fixed))
 print("arm rotations\t: " + str(arm_rotations))
 print("d\t:" + str(d))
-
-# calculate d given theta_m, L_m and L_s
-
-# TODO : Generate phase differences at these points of time, from the bin file.
-# TODO : calculate angle of arrival
+print("relative AOA\t:" + str(relative_aoas))
+print("absolute AOA\t:" + str(absolute_aoas))
 
 
 
