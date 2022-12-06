@@ -15,6 +15,17 @@ def chunked_read( fobj, chunk_bytes = bytes_per_sample*1024 ):
         else:
             yield data
 
+def bin2csv_row(data, num_channels = 2):
+    sig_i1, = struct.unpack('<h', data[0:2])
+    sig_q1, = struct.unpack('<h', data[2:4])
+    
+    if num_channels == 1:
+        return sig_i1, sig_q1
+
+    sig_i2, = struct.unpack('<h', data[4:6])
+    sig_q2, = struct.unpack('<h', data[6:8])
+    return sig_i1, sig_q1, sig_i2, sig_q2
+
 def bin2csv( binfile = None,  chunk_bytes = bytes_per_sample*1024 ):
     output = []
     with open(binfile, 'rb') as b:
@@ -22,14 +33,7 @@ def bin2csv( binfile = None,  chunk_bytes = bytes_per_sample*1024 ):
         for data in chunked_read(b, chunk_bytes = chunk_bytes):
             count += len(data)
             for i in range(0, len(data), 8):
-                sig_i1, = struct.unpack('<h', data[i:i+2])
-                sig_q1, = struct.unpack('<h', data[i+2:i+4])
-                sig_i2, = struct.unpack('<h', data[i+4:i+6])
-                sig_q2, = struct.unpack('<h', data[i+6:i+8])
+                sig_i1, sig_q1, sig_i2, sig_q2 = bin2csv_row(data[i:i+8])
                 count +=1
-                output.push([sig_i1, sig_q1, sig_i2, sig_q2])
-                print(",".join([str(sig_i1), str(sig_q1), str(sig_i2), str(sig_q2)]))
+                output.append([sig_i1, sig_q1, sig_i2, sig_q2])
     return output
-    
-f_in = sys.argv[1]
-bin2csv(f_in)
