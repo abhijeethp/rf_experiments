@@ -95,7 +95,6 @@ with open('/tmp/exp_ard_out.log', 'wb') as f:
         write(p,f"rx config file={file_out_name}_{step_num}.{file_ext} format={file_format} n={num_samples(rx_config) * len(rx_channels)} channel={rx_channels_str}; rx start;")
         f.write(bytes(current_time() + "," + line+"\n", 'utf-8'))
         step_num += 1
-        time.sleep(antenna_stand_still_duration_ms / 1000 * 3 / 4)
 
 
 log_current_time("terminating_bladerf_cli")

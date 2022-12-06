@@ -1,5 +1,7 @@
 from math import pow, sqrt, sin, cos, acos, atan, pi
 
+data_directory = "/tmp"
+
 # SAR GEOMETRY
 L_s = 40
 L_m = 30
@@ -23,17 +25,18 @@ def distance_at_degree(degree):
 d = [distance_at_degree(deg) for deg in arm_rotations]
 
 wavelength = 15
-def angle_of_arrival(d):
+def angle_of_arrival(step_num, d):
+    signal_file = f"{data_directory}/exp_rx_out_{step_num}.bin"
     phase_diff = 0 # TODO
     return acos( phase_diff * wavelength / 2 * pi * d)
 
-relative_aoas = [angle_of_arrival(distance) for distance in d]
+relative_aoas = [angle_of_arrival(step_num, distance) for step_num, distance in enumerate(d)]
 
 def angle_to_base(theta_m):
     theta_m_rad = theta_m * 2 * pi / 360
     return atan( L_m * sin(theta_m_rad) / (L_s - L_m * cos(theta_m_rad)) )
 
-absolute_aoas = [relative_aoa + angle_to_base(arm_rotations[i]) for relative_aoa, i in enumerate(relative_aoas)]
+absolute_aoas = [relative_aoa + angle_to_base(arm_rotations[i]) for i, relative_aoa in enumerate(relative_aoas)]
 
 print("servo rotations\t: " + str(servo_rotations))    
 print("servo rotations error fixed\t: " + str(servo_rotations_error_fixed))

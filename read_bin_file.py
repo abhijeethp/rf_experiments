@@ -16,6 +16,7 @@ def chunked_read( fobj, chunk_bytes = bytes_per_sample*1024 ):
             yield data
 
 def bin2csv( binfile = None,  chunk_bytes = bytes_per_sample*1024 ):
+    output = []
     with open(binfile, 'rb') as b:
         count = 0
         for data in chunked_read(b, chunk_bytes = chunk_bytes):
@@ -26,7 +27,9 @@ def bin2csv( binfile = None,  chunk_bytes = bytes_per_sample*1024 ):
                 sig_i2, = struct.unpack('<h', data[i+4:i+6])
                 sig_q2, = struct.unpack('<h', data[i+6:i+8])
                 count +=1
+                output.push([sig_i1, sig_q1, sig_i2, sig_q2])
                 print(",".join([str(sig_i1), str(sig_q1), str(sig_i2), str(sig_q2)]))
-
+    return output
+    
 f_in = sys.argv[1]
 bin2csv(f_in)
