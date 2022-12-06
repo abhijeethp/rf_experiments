@@ -13,7 +13,7 @@ int divfactor = 4;
 int current_status = STATUS_OFF;
 int loop_num = 0;
 
-int antenna_stand_still_duration_ms = 25;
+int antenna_stand_still_duration_ms = 100;
 
 
 void setup() {
@@ -36,7 +36,10 @@ void loop() {
   if(current_status == STATUS_SET_POS) {
     pos = Serial.parseInt();
     myservo.write(pos);
+    Serial.println(String(pos));
+    delay(antenna_stand_still_duration_ms);
     current_status = STATUS_OFF;
+    Serial.println("Status changed to " + String(current_status));
     return;
   }
 

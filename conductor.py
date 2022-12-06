@@ -12,10 +12,10 @@ sampling_duration = num_cycles * cycle_duration_s
 antenna_stand_still_duration_ms  = 25
 
 rx_config = {
-    "frequency": 2000 * 10**6,
+    "frequency": 1800 * 10**6,
     "samplerate": 31 * 10**6,
     "bandwidth": 10 * 10**6,
-    "gain": 40,
+    "gain": 58,
     "duration_s": antenna_stand_still_duration_ms / 1000 / 4
 }
 
