@@ -12,7 +12,7 @@ n=500
 
 for i in range(3):
     deg = sys.argv[1]
-    signal = bin2csv(f"./exp_2_data/exp_rx_out_{deg}_{i}.bin")
+    signal = bin2csv(f"./exp_3_data/exp_rx_out_{deg}_{i}.bin")
     signal1_i = [i[0] for i in signal][:n]
     signal1_q = [i[1] for i in signal][:n]
     signal2_i = [i[2] for i in signal][:n]
@@ -34,7 +34,6 @@ for i in range(3):
     axs[2][i].set_title('RX2 (moving) Signal in Frequency Domain!')
 
     # //deg
-    print(yf_s)
 
     # div = np.divide(yf_m, yf_s)
     # idiv = irfft(div)

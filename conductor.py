@@ -12,11 +12,11 @@ sampling_duration = num_cycles * cycle_duration_s
 antenna_stand_still_duration_ms  = 25
 
 rx_config = {
-    "frequency": 1800 * 10**6,
-    "samplerate": 31 * 10**6,
+    "frequency": 1000 * 10**6,
+    "samplerate": 60 * 10**6,
     "bandwidth": 10 * 10**6,
-    "gain": 58,
-    "duration_s": antenna_stand_still_duration_ms / 1000 / 4
+    "gain": 40,
+    "duration_s": 74/1000
 }
 
 port = '/dev/ttyACM0'
@@ -77,24 +77,38 @@ arduino = serial.Serial(port=port, baudrate=baudrate, timeout=0.1)
 time.sleep(5)
 
 
-log_current_time(f"running_{num_cycles}_servo_cycles")
-arduino.write(bytes(f'3 {num_cycles}', 'utf-8'))
+# log_current_time(f"running_{num_cycles}_servo_cycles")
+# arduino.write(bytes(f'3 {num_cycles}', 'utf-8'))
 
 
-with open('/tmp/exp_ard_out.log', 'wb') as f:
-    step_num = 0
-    while True:
-        line = arduino.readline().decode('utf-8').rstrip()
-        if line == "" or line == "Status changed to 3":
-            continue
+# log_current_time(f"starting_rx_for_step[{step_num}]_degree[{line}]")
+degs = [0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90]
+trails = 3
 
-        if line == "Status changed to 0":
-            break
+degs=[30]
+trails=3
+for deg in degs:
+    arduino.write(bytes(f'2 {deg}', 'utf-8'))
+    time.sleep(5)
+    for num_trail in range (trails):
+        write(p,f"rx config file={file_out_name}_{deg}_{num_trail}.{file_ext} format={file_format} n={num_samples(rx_config) * len(rx_channels)} channel={rx_channels_str}; rx start;")
+        time.sleep(5)
+
+
+# with open('/tmp/exp_ard_out.log', 'wb') as f:
+#     step_num = 0
+#     while True:
+#         line = arduino.readline().decode('utf-8').rstrip()
+#         if line == "" or line == "Status changed to 3":
+#             continue
+
+#         if line == "Status changed to 0":
+#             break
         
-        log_current_time(f"starting_rx_for_step[{step_num}]_degree[{line}]")
-        write(p,f"rx config file={file_out_name}_{step_num}.{file_ext} format={file_format} n={num_samples(rx_config) * len(rx_channels)} channel={rx_channels_str}; rx start;")
-        f.write(bytes(current_time() + "," + line+"\n", 'utf-8'))
-        step_num += 1
+#         log_current_time(f"starting_rx_for_step[{step_num}]_degree[{line}]")
+#         write(p,f"rx config file={file_out_name}_{step_num}.{file_ext} format={file_format} n={num_samples(rx_config) * len(rx_channels)} channel={rx_channels_str}; rx start;")
+#         f.write(bytes(current_time() + "," + line+"\n", 'utf-8'))
+#         step_num += 1
 
 
 log_current_time("terminating_bladerf_cli")

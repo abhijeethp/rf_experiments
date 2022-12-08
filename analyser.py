@@ -16,7 +16,7 @@ for i in range(1, len(servo_rotations)):
     curr_deg = round(prev_deg + deg_delta, 4)
     servo_rotations_error_fixed.append(curr_deg)  
 
-arm_rotations = [round(deg * 3 / 4, 4) for deg in servo_rotations_error_fixed]
+arm_rotations = [round(deg * 4/3, 4) for deg in servo_rotations_error_fixed]
 
 def distance_at_degree(degree):
     a = degree * 2 * pi / 360
