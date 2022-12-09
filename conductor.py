@@ -2,6 +2,8 @@ import serial, sys
 import time
 import subprocess as sp
 
+from config import config
+
 logfile = open('/tmp/exp_log_out.log', 'w')
 
 # SAR CONFIG
@@ -11,13 +13,7 @@ sampling_duration = num_cycles * cycle_duration_s
 
 antenna_stand_still_duration_ms  = 25
 
-rx_config = {
-    "frequency": 1000 * 10**6,
-    "samplerate": 60 * 10**6,
-    "bandwidth": 10 * 10**6,
-    "gain": 40,
-    "duration_s": 74/1000
-}
+rx_config = config()
 
 port = '/dev/ttyACM0'
 baudrate = 9600
@@ -49,7 +45,7 @@ def start(command):
     )
 
 def write(process, message):
-    # print(message)
+    print(message)
     process.stdin.write(f"{message.strip()}\n".encode("utf-8"))
     process.stdin.flush()
 
@@ -65,7 +61,8 @@ write(p, f"set agc off")
 write(p, f"set frequency rx {rx_config['frequency']}")
 write(p, f"set samplerate rx {rx_config['samplerate']}")
 write(p, f"set bandwidth rx {rx_config['bandwidth']}")
-write(p, f"set gain rx {rx_config['gain']}")
+write(p, f"set gain rx1 {rx_config['gain']}")
+write(p, f"set gain rx2 {rx_config['gain']}")
 file_format = file_ext = "bin"
 file_out_name = "/tmp/exp_rx_out"
 rx_channels = ["1","2"]
@@ -82,11 +79,9 @@ time.sleep(5)
 
 
 # log_current_time(f"starting_rx_for_step[{step_num}]_degree[{line}]")
-degs = [0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90]
+degs = [0, 10, 20, 30, 40] # 45, 50, 60, 70, 80, 90]
 trails = 3
 
-degs=[30]
-trails=3
 for deg in degs:
     arduino.write(bytes(f'2 {deg}', 'utf-8'))
     time.sleep(5)
