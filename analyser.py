@@ -14,27 +14,21 @@ def cart2pol(x,y):
 # Things to Plot
 things_to_plot = {
     "should_plot_raw_signals" : 0,    # 0. Raw Signals
-    # "should_plot_i_vs_q" : 1,         # 1. IvsQ of Signals
+    # "should_plot_i_vs_q" : 1,       # 1. IvsQ of Signals
     "should_plot_ffts" : 1,           # 2. FFT of Signal1
     "should_plot_fftm" : 2,           # 3. FFT of Signal2
     "should_plot_aoa_estimate" : 3,   # 4. AoA Estimate
 }
 
 data_directory = "exp_2_data"
-trial_num = 0
+trial_num = 2
 
 fig = plt.figure()
 fig.suptitle(f'Trial - {trial_num}', fontsize=16)
 
-servo_drift_per_degree = 11.25 / 270
+servo_error = 35/90
 servo_rotations = [0, 10, 20, 30, 40] #, 50, 60, 70, 80, 90, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0, 10, 20, 30]
-servo_rotations_error_fixed = [servo_rotations[0]]
-for i in range(1, len(servo_rotations)):
-    prev_deg = servo_rotations_error_fixed[i-1]
-    deg_delta = servo_rotations[i] - servo_rotations[i-1]
-    deg_delta = (deg_delta - deg_delta*servo_drift_per_degree) if deg_delta > 0 else (deg_delta + deg_delta * servo_drift_per_degree) if deg_delta < 0 else 0
-    curr_deg = round(prev_deg + deg_delta, 4)
-    servo_rotations_error_fixed.append(curr_deg)  
+servo_rotations_error_fixed = [x + x * servo_error for x in servo_rotations]
 
 arm_rotations = [round(deg * 4/3, 4) for deg in servo_rotations_error_fixed]
 
