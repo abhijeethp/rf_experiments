@@ -29,11 +29,8 @@ def bin2csv_row(data, num_channels = 2):
 def bin2csv( binfile = None,  chunk_bytes = bytes_per_sample*1024 ):
     output = []
     with open(binfile, 'rb') as b:
-        count = 0
         for data in chunked_read(b, chunk_bytes = chunk_bytes):
-            count += len(data)
             for i in range(0, len(data), 8):
                 sig_i1, sig_q1, sig_i2, sig_q2 = bin2csv_row(data[i:i+8])
-                count +=1
                 output.append([sig_i1, sig_q1, sig_i2, sig_q2])
     return output
