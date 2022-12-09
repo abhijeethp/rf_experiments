@@ -2,7 +2,7 @@ import serial, sys
 import time
 import subprocess as sp
 
-from config import config
+from constants import config
 
 logfile = open('/tmp/exp_log_out.log', 'w')
 
