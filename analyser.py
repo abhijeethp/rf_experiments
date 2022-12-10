@@ -5,6 +5,7 @@ from scipy.fft import fft,rfft, rfftfreq
 from math import e, pi, sin, floor
 from bin_csv_utils import bin2csv
 from constants import config, L_s, L_m, wavelength
+import sys
 
 def cart2pol(x,y):
     rho = np.sqrt(x**2 + y**2)
@@ -21,7 +22,7 @@ things_to_plot = {
 }
 
 data_directory = "exp_2_data"
-trial_num = 2
+trial_num = sys.argv[1]
 
 fig = plt.figure()
 fig.suptitle(f'Trial - {trial_num}', fontsize=16)
