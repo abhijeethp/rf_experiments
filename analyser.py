@@ -21,14 +21,14 @@ things_to_plot = {
     "should_plot_aoa_estimate" : 3,   # 4. AoA Estimate
 }
 
-data_directory = "exp_2_data"
+data_directory = "exp_4_data/110_opposite"
 trial_num = sys.argv[1]
 
 fig = plt.figure()
 fig.suptitle(f'Trial - {trial_num}', fontsize=16)
 
 servo_error = 35/90
-servo_rotations = [0, 10, 20, 30, 40] #, 50, 60, 70, 80, 90, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0, 10, 20, 30]
+servo_rotations = [i*5 for i in range(5)]
 servo_rotations_error_fixed = [x + x * servo_error for x in servo_rotations]
 
 arm_rotations = [round(deg * 4/3, 4) for deg in servo_rotations_error_fixed]
@@ -74,8 +74,8 @@ def angle_of_arrival(step_num, d):
     if("should_plot_raw_signals" in things_to_plot):
         chart = plt.subplot(len(things_to_plot), len(servo_rotations),len(servo_rotations) * things_to_plot["should_plot_raw_signals"] + step_num + 1)
         chart.set_title(f"Deg={servo_rotations[step_num]}")
-        chart.plot(sig_i_1[-1000:-900], color="blue")
-        chart.plot(sig_i_2[-1000:-900], color="orange")
+        chart.plot(sig_i_1, color="blue")
+        chart.plot(sig_i_2, color="orange")
 
     if("should_plot_i_vs_q" in things_to_plot):
         chart = plt.subplot(len(things_to_plot), len(servo_rotations),len(servo_rotations) * things_to_plot["should_plot_i_vs_q"] + step_num + 1, polar=True)

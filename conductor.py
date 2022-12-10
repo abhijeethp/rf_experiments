@@ -79,15 +79,17 @@ time.sleep(5)
 
 
 # log_current_time(f"starting_rx_for_step[{step_num}]_degree[{line}]")
-degs = [0, 10, 20, 30, 40] # 45, 50, 60, 70, 80, 90]
+degs = [i*5 for i in range(20)]
 trails = 3
 
 for deg in degs:
+    log(f"set to {deg}")
     arduino.write(bytes(f'2 {deg}', 'utf-8'))
-    time.sleep(5)
+    time.sleep(3)
     for num_trail in range (trails):
+        log(f"recording trail-{num_trail}")
         write(p,f"rx config file={file_out_name}_{deg}_{num_trail}.{file_ext} format={file_format} n={num_samples(rx_config) * len(rx_channels)} channel={rx_channels_str}; rx start;")
-        time.sleep(5)
+        time.sleep(3)
 
 
 # with open('/tmp/exp_ard_out.log', 'wb') as f:
